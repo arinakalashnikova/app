@@ -6,7 +6,7 @@ class Controller{
     private ServiceInterface $service;
     private ViewInterface $view;
 
-    public function __construct(ViewInterface $view = new ConsoleView(),ServiceInterface $service = new CartService(new DBRepository()))
+    public function __construct(ViewInterface $view,ServiceInterface $service)
     {
         //теперь используем интерфейсы а не классы,
         // если добавим HTMLView или кдругой сервис тут ничего переписывать не придется
