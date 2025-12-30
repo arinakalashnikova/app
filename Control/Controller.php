@@ -19,7 +19,7 @@ class Controller{
         try {
             $this->service->hold($sku, $price);
             $this->view->success(SUCCESS); //вместо текста передаем константу, если захотим в случае успеха выводить
-                                            // что-то другое, лезть в Controller не придется
+                                            // что-то другое, лезть в Controller не придется.
         } catch (Throwable $e) {
             $this->view->error($e->getMessage());
         }
