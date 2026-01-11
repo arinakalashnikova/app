@@ -1,7 +1,11 @@
 <?php
 
-require_once __DIR__ . '/../Model/CartService.php';
-require_once __DIR__ . '/../View/ConsoleView.php';
+namespace App\Control;
+
+use App\Service\ServiceInterface;
+use App\View\ViewInterface;
+use Throwable;
+
 
 class Controller{
     private ServiceInterface $service;

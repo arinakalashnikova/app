@@ -1,6 +1,8 @@
 <?php
-require_once __DIR__ . '/DBRepository.php';
-require_once __DIR__ . '/ServiceInterface.php';
+namespace App\Service;
+
+use App\Repository\OrderRepositoryInterface;
+use RuntimeException;
 
 class CartService implements ServiceInterface
 {

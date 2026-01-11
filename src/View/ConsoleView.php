@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . '/ViewInterface.php';
+namespace App\View;
+
 class ConsoleView implements ViewInterface
 {
     public function success($message)

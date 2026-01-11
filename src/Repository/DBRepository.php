@@ -1,5 +1,7 @@
 <?php
-require_once __DIR__ . '/OrderRepositoryInterface.php';
+namespace App\Repository;
+use PDO;
+
 class DBRepository implements OrderRepositoryInterface{
     private PDO $pdo;
     public function __construct($pdo) {
