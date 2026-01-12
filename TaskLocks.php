@@ -6,7 +6,7 @@ use App\Container\Container;
 use App\View\ConsoleView;
 use App\Repository\DBRepository;
 use App\Service\CartService;
-use PDO;
+use App\Router\Router;
 
 const SUCCESS = "Успех";
 const UNFOUND = "Не найдено";
@@ -36,12 +36,12 @@ $container->set(PDO::class, function () {
     );
 });
 //
-//собираем все
 // $view = new ConsoleView();
 // $repository = new DBRepository($pdo);
 // $service = new CartService($repository);
 // $controller = new Controller($view, $service);
 
+//теперь собираем все через контейнер
 // View
 $container->set(ConsoleView::class, fn() => new ConsoleView());
 
@@ -63,15 +63,14 @@ $container->set(Controller::class, function (Container $c) {
     );
 });
 
-//достаем контроллер
-$controller = $container->get(Controller::class);
-//запускаем при помощи контроллера
-$options = getopt('', ['hold:', 'price:', 'order:', 'confirm:']);
-if (isset($options['hold'])) {
-    $controller->holdAction($options['hold'], $options['price']);
-}
+// Router
+$container->set(Router::class, fn($c) => new Router($c));
 
-if (isset($options['confirm'])) {
-    $controller->confirmAction('Hold/' . $options['confirm']);
-}
+//настраиваем router
+$router = $container->get(Router::class);
+$router->add('hold', 'holdAction');
+$router->add('confirm', 'confirmAction');
+//запускаем приложение при помощи router
+$router->call($argv);
+
 
