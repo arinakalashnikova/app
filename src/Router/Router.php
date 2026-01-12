@@ -1,17 +1,14 @@
 <?php
 namespace App\Router;
 use App\Container\Container;
-use App\Control\Controller;
-class Router{
-    private array $routes = [];
-    private Container $container;
-    public function __construct(Container $container)
-    {
-        $this->container = $container;
-    }
+use App\Router\RouterInterface;
+use App\Control\ControllerInterface;
 
-    public function add(string $command, string $action){
-        $this->routes[$command] = $action;
+class Router implements RouterInterface{
+    private ControllerInterface $controller; //теперь контроллер вместо контейнера. Router больше не создает зависимости сам
+    public function __construct(ControllerInterface $controller)
+    {
+        $this->controller = $controller;
     }
 
     public function call(array $args){
@@ -22,12 +19,10 @@ class Router{
             return;
         }
 
-        $controller = $this->container->get(Controller::class);
-
         if (isset($options['hold'])) {
-            $controller->holdAction($options['hold'], $options['price'] ?? null);
+            $this->controller->holdAction($options['hold'], $options['price'] ?? null);
         } elseif (isset($options['confirm'])) {
-            $controller->confirmAction('Hold/' . $options['confirm']);
+            $this->controller->confirmAction('Hold/' . $options['confirm']);
         } else {
             echo "неизвестная команда\n";
         }

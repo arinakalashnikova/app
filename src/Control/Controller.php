@@ -7,7 +7,7 @@ use App\View\ViewInterface;
 use Throwable;
 
 
-class Controller{
+class Controller implements ControllerInterface{
     private ServiceInterface $service;
     private ViewInterface $view;
 

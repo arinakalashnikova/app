@@ -7,6 +7,8 @@ use App\View\ConsoleView;
 use App\Repository\DBRepository;
 use App\Service\CartService;
 use App\Router\Router;
+use App\Router\RouterInterface;
+use App\Control\ControllerInterface;
 
 const SUCCESS = "Успех";
 const UNFOUND = "Не найдено";
@@ -56,20 +58,17 @@ $container->set(CartService::class, function (Container $c) {
 });
 
 // Controller
-$container->set(Controller::class, function (Container $c) {
-    return new Controller(
-        $c->get(ConsoleView::class),
-        $c->get(CartService::class)
-    );
-});
+$container->set(ControllerInterface::class, fn($c) =>
+new Controller($c->get(ConsoleView::class), $c->get(CartService::class))
+);
 
 // Router
-$container->set(Router::class, fn($c) => new Router($c));
+$container->set(RouterInterface::class, fn($c) =>
+new Router($c->get(ControllerInterface::class))  //теперь передаем готовый контроллер вместо контейнера
+);
 
 //настраиваем router
-$router = $container->get(Router::class);
-$router->add('hold', 'holdAction');
-$router->add('confirm', 'confirmAction');
+$router = $container->get(RouterInterface::class);
 //запускаем приложение при помощи router
 $router->call($argv);
 
