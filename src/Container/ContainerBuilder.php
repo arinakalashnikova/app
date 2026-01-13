@@ -4,10 +4,11 @@ use App\config\DatabaseConfig;
 use App\Control\Controller;
 use App\Control\ControllerInterface;
 use App\Repository\DBRepository;
-use App\Router\Router;
+use App\Router\WebRouter;
 use App\Router\RouterInterface;
 use App\Service\CartService;
-use App\View\ConsoleView;
+use App\View\WebView;
+
 
 class ContainerBuilder
 {
@@ -29,7 +30,8 @@ class ContainerBuilder
             );
         });
         // View
-        $container->set(ConsoleView::class, fn() => new ConsoleView());
+        //$container->set(ConsoleView::class, fn() => new ConsoleView()); //при консольном приложении
+        $container->set(WebView::class, fn() => new WebView());  //при Web приложении
 
         // Repository
         $container->set(DBRepository::class, function (Container $c) {
@@ -43,12 +45,12 @@ class ContainerBuilder
 
         // Controller
         $container->set(ControllerInterface::class, fn($c) =>
-        new Controller($c->get(ConsoleView::class), $c->get(CartService::class))
+        new Controller($c->get(WebView::class), $c->get(CartService::class))
         );
 
         // Router
         $container->set(RouterInterface::class, fn($c) =>
-        new Router($c->get(ControllerInterface::class))  //теперь передаем готовый контроллер вместо контейнера
+        new WebRouter($c->get(ControllerInterface::class))  //WebRouter
         );
 
         return $container;

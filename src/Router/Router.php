@@ -1,7 +1,5 @@
 <?php
 namespace App\Router;
-use App\Container\Container;
-use App\Router\RouterInterface;
 use App\Control\ControllerInterface;
 
 class Router implements RouterInterface{
