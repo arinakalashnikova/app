@@ -22,8 +22,31 @@ class WebRouter implements RouterInterface{
         $data = array_merge($data, $_POST, $_GET);
         return $data ?: [];
     }
-    private function isValidRequest(){
-        return isset($input['action']);
+    private function handleGetRouting(): void {
+        $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        $clientBase = 'http://client.local:3000';
+
+        switch ($uri) {
+            case '/':
+            case '/index':
+                header("Location: $clientBase/index.html");
+                exit;
+            case '/tasks':
+            case '/tasks/list':
+                header("Location: $clientBase/tasks.html");
+                exit;
+            case '/hold':
+                header("Location: $clientBase/hold.html");
+                exit;
+            default:
+                http_response_code(404);
+                header('Content-Type: text/html');
+                echo '<h1>Страница не найдена</h1>';
+                exit;
+        }
+    }
+    private function isGetRequest(): bool {
+        return $_SERVER['REQUEST_METHOD'] === 'GET';
     }
     private function sendError($message):void{
         http_response_code(400);
@@ -32,6 +55,11 @@ class WebRouter implements RouterInterface{
         exit;
     }
     private function executeAction($input){
+        if ($this->isGetRequest()) {
+            $this->handleGetRouting();
+            return;
+        }
+
         $action = $input['action'];
         if ($action === 'hold'){
             if (!isset($input['id']) || !isset($input['price'])){
@@ -48,16 +76,11 @@ class WebRouter implements RouterInterface{
             }
             $this->controller->confirmAction('Hold/' . $input['state']);
         } else {
-            $this->sendError("Неизвестное действиее $action");
+            $this->sendError("Неизвестное действие $action");
         }
-
     }
-    public function call(array $args = []) {  // default []
+    public function call(array $args = []) {
         $input = $this->readRequestData();
-        if (empty($input['action'])) {  // вместо global $input
-            $this->sendError('Неверный запрос');
-            return;
-        }
         $this->executeAction($input);
     }
 
